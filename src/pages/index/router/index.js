@@ -79,6 +79,12 @@ export const asyncRouterMap = [
         name: 'businesstype',
         component: () => import('../views/manager/businesstype/index'),
         meta: { title: '业态管理', icon: 'form', roles: 4 }
+      },
+      {
+        path: 'dict',
+        name: 'dict',
+        component: () => import('../views/manager/dict/index'),
+        meta: { title: '字典管理', icon: 'form', roles: 4 }
       }
     ]
   },
