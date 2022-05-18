@@ -23,16 +23,3 @@ export function getPositionPage(data) {
   })
 }
 
-export function modifyPositionFlag(bid, flag) {
-  return request({
-    url: `/api/position/${bid}/${flag}`,
-    method: 'post'
-  })
-}
-
-export function getPositionGuid(type) {
-  return request({
-    url: `/api/position/guid/${type}`,
-    method: 'get'
-  })
-}

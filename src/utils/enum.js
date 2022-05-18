@@ -50,17 +50,46 @@ export function itemsToFlags(items, def = 0) {
   return items && items.length ? items.reduce((total, val) => total |= val, 0) : def
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////
 
 
-
-export const CommonFlag = (function(Enum){
-  Enum[0] = Enum['Normal'] = { name: '正常', value: 0 };
-  Enum[1] = Enum['Deleted'] = { name: '删除', value: 1 };
+export const CommonFlagEnum = (function(Enum){
+  Enum[0] = Enum['Normal'] = { name: '是', value: 0 };
+  Enum[1] = Enum['Deleted'] = { name: '否', value: 1 };
   return Enum;
 })(EnumType())
 
 
+export const MenuTypeEnum = (function(Enum){
+  Enum[0] = Enum['Manager'] = { name: '系统管理', value: 1 };
+	return Enum;
+})(EnumType())
 
+export const OrgTypeEnum = (function(Enum){
+  Enum[0] = Enum['Group'] = { name: '集团', value: 1 };
+  Enum[1] = Enum['System'] = { name: '系统', value: 2 };
+  Enum[2] = Enum['Area'] = { name: '区域', value: 3 };
+  Enum[3] = Enum['Single'] = { name: '单店', value: 4 };
+  Enum[4] = Enum['Other'] = { name: '其他', value: 5 };
+	return Enum;
+})(EnumType())
+
+//2022-05-12
+export const OrgType = (function(Enum){
+  Enum[0] = Enum['Group'] = { name: '集团', value: 1 };
+  Enum[1] = Enum['System'] = { name: '系统', value: 2 };
+  Enum[2] = Enum['Area'] = { name: '区域', value: 3 };
+  Enum[3] = Enum['Single'] = { name: '单店', value: 4 };
+  Enum[4] = Enum['Other'] = { name: '其他', value: 5 };
+	return Enum;
+})(EnumType())
+
+export const IsOrg = (function(Enum){
+  Enum[0] = Enum['BM'] = { name: '部门', value: 1 };
+  Enum[1] = Enum['JG'] = { name: '机构', value: 2 };
+  Enum[2] = Enum['DW'] = { name: '单位', value: 3 };
+	return Enum;
+})(EnumType())
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 
