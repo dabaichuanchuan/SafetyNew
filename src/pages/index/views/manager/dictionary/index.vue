@@ -109,9 +109,18 @@
             <template slot-scope="scope">{{
               scope.row.type | formatMenuTypeEnumName
             }}</template>
+          </el-table-column>          
+          <el-table-column label="父级" align="center">
+            <template slot-scope="scope">{{ scope.row.tenantText }}</template>
           </el-table-column>
-          <el-table-column label="描述" align="center" width="210">
-            <template slot-scope="scope">{{ scope.row.description }}</template>
+          <el-table-column label="属性1" align="center">
+            <template slot-scope="scope">{{ scope.row.property1 }}</template>
+          </el-table-column>
+          <el-table-column label="属性2" align="center">
+            <template slot-scope="scope">{{ scope.row.property2 }}</template>
+          </el-table-column>
+          <el-table-column label="序号" align="center">
+            <template slot-scope="scope">{{ scope.row.orderNo }}</template>
           </el-table-column>
           <el-table-column label="时间" align="center" width="210">
             <template slot-scope="scope">
@@ -119,7 +128,7 @@
               <div>更新时间：{{ scope.row.modifierTime | formatTime }}</div>
             </template>
           </el-table-column>
-          <el-table-column label="操作" align="center" width="150">
+          <el-table-column label="操作" align="center">
             <template slot-scope="scope">
               <el-button
                 size="mini"
@@ -146,7 +155,7 @@
       </div>
     </el-card>
     <el-dialog
-      :title="dialogData.edit ? '编辑角色' : '添加角色'"
+      :title="dialogData.edit ? '编辑字典' : '添加字典'"
       :visible.sync="dialogData.show"
       width="50%"
     >
@@ -181,6 +190,7 @@
                   :key="item.id"
                   :label="item.name"
                   :value="item.id"
+                  show-word-limit
                 >
                 </el-option>
               </el-select>
@@ -188,19 +198,7 @@
           </el-col>
         </el-row>
         <el-row>
-          <el-col :span="24">
-            <el-form-item label="描述：" prop="description">
-              <el-input
-                v-model="dialogData.model.description"
-                :maxlength="225"
-                show-word-limit
-              >
-              </el-input>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="8">
+          <el-col :span="12">
             <el-form-item label="类型：" prop="type">
               <el-select
                 v-model="dialogData.model.type"
@@ -215,6 +213,59 @@
                 >
                 </el-option>
               </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="父级：" prop="parentId">
+              <el-select
+                v-model="dialogData.model.parentId"
+                clearable
+                placeholder="请选择"
+              >
+                <el-option
+                  v-for="item in enterpriseOptions"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id"
+                  show-word-limit
+                >
+                </el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="属性1：" prop="property1">
+              <el-input
+                v-model="dialogData.model.property1"
+                :maxlength="50"
+                show-word-limit
+              >
+              </el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="属性2：" prop="property2">
+              <el-input
+                v-model="dialogData.model.property2"
+                :maxlength="50"
+                show-word-limit
+              >
+              </el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="8">
+            <el-form-item label="序号：" prop="orderNo">
+              <el-input-number
+                v-model="dialogData.model.orderNo"
+                :min="1"
+                :max="9999999"
+                show-word-limit
+              >
+              </el-input-number>
             </el-form-item>
           </el-col>
           <el-col :span="8">
@@ -248,7 +299,10 @@
   </div>
 </template>
 <script>
-import { saveRoleDetail, getRolePage } from "../../../api/manager/role";
+import {
+  saveDictionaryDetail,
+  getDictionaryPage,
+} from "../../../api/manager/dictionary";
 import { getEnterpriseList } from "../../../api/manager/enterprise";
 import { CommonFlagEnum, MenuTypeEnum } from "@/utils/enum";
 import { formatDateTime } from "@/utils/common";
@@ -266,10 +320,13 @@ const defaultListQuery = {
 const defaultModel = {
   id: "",
   name: "",
-  description: "",
-  tenantId: "",
   type: "",
+  property1: "",
+  property2: "",
+  orderNo: 0,
   flag: 0,
+  tenantId: "",
+  parentId: "",
 };
 
 export default {
@@ -292,6 +349,8 @@ export default {
         rules: {
           name: [{ required: true, message: "请输入名称" }],
           tenantId: [{ required: true, message: "请选择企业" }],
+          type: [{ required: true, message: "请选择类型" }],
+          parentId: [{ required: true, message: "请选择父级" }],
         },
       },
     };
@@ -319,7 +378,7 @@ export default {
     getList(paged) {
       if (!paged) this.listQuery.pageNum = 1;
       this.listLoading = true;
-      getRolePage(this.listQuery).then((res) => {
+      getDictionaryPage(this.listQuery).then((res) => {
         this.list = res.data.list;
         this.total = res.data.total;
         this.listLoading = false;
@@ -358,7 +417,7 @@ export default {
     bindDialogConfirm() {
       this.$refs.defaultForm.validate((valid) => {
         if (valid) {
-          saveRoleDetail(this.dialogData.model)
+          saveDictionaryDetail(this.dialogData.model)
             .then((res) => {
               this.$message.success("保存成功");
               this.getList();

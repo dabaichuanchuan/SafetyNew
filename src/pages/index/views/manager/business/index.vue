@@ -20,11 +20,11 @@
       </div>
       <div class="where-area">
         <el-form :inline="true" :model="listQuery" size="small" label-width="100px">
-          <el-form-item label="输入搜索：">
+          <el-form-item label="关键字">
             <el-input v-model="listQuery.keyWord" class="input-width" placeholder="请输入关键字" clearable></el-input>
           </el-form-item>
            <el-form-item label="企业：">
-            <el-select v-model="listQuery.tenantId" class="input-width" clearable placeholder="请选择">
+            <el-select v-model="listQuery.tenantId" class="input-width" clearable placeholder="全部">
                <el-option
                   v-for="item in enterpriseOptions"
                   :key="item.id"
@@ -35,7 +35,7 @@
             </el-select>
           </el-form-item>
           <el-form-item label="状态：">
-            <el-select v-model="listQuery.flag" class="input-width" clearable placeholder="请选择">
+            <el-select v-model="listQuery.flag" class="input-width" clearable placeholder="全部">
               <el-option
                 v-for="item in flagOptions"
                 :key="item.value"
@@ -173,8 +173,8 @@
   </div>
 </template>
 <script>
-  import { getBusinessPage,saveBusinessDetail } from '../../../api/business'
-  import { getEnterpriseList } from '../../../api/enterprise'
+  import { getBusinessPage,saveBusinessDetail } from '../../../api/manager/business'
+  import { getEnterpriseList } from '../../../api/manager/enterprise'
   import { CommonFlagEnum} from '@/utils/enum'
   import { formatDateTime } from '@/utils/common'
 

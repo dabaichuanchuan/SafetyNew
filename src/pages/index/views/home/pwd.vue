@@ -33,7 +33,7 @@
   </el-card>
 </template>
 <script>
-import { changePassword } from '../../api/user'
+import { changePassword } from '../../api/manager/user'
 
 const defaultModel = {
   oldpass: '',

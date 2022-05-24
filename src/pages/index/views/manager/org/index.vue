@@ -233,16 +233,14 @@
             <el-row>
               <el-col :span="10">
                 <el-form-item label="创建时间：" prop="createrTime">
-                  {{ dataModel.createrTime | dateFormat }}({{
-                    dataModel.creater
-                  }})
+                  {{ dataModel.createrTime | dateFormat }}
+                  {{ (dataModel.creater != null ? '('+ dataModel.creater +')' : '') }}
                 </el-form-item>
               </el-col>
               <el-col :span="10">
                 <el-form-item label="修改时间：" prop="modifierTime">
-                  {{ dataModel.modifierTime | dateFormat }}({{
-                    dataModel.modifier
-                  }})
+                  {{ dataModel.modifierTime | dateFormat }}
+                  {{ (dataModel.modifier != null ? '('+ dataModel.modifier +')' : '') }}
                 </el-form-item>
               </el-col>
             </el-row>
@@ -408,27 +406,31 @@
           </el-col>
         </el-row>
         <el-row>
-          <el-col :span="5">
+          <el-col :span="6">
             <el-form-item label="是否启用：" prop="flag">
-              <el-checkbox
+              <el-switch
                 v-model="dialogData.model.flag"
-                :true-label="0"
-                :false-label="1"
-                size="small"
-              />
+                :active-value="0"
+                :inactive-value="1"
+                active-text="是"
+                inactive-text="否"
+              >
+              </el-switch>
             </el-form-item>
           </el-col>
-          <el-col :span="5">
+          <el-col :span="6">
             <el-form-item label="是否筹备期：" prop="isPreparation">
-              <el-checkbox
+              <el-switch
                 v-model="dialogData.model.isPreparation"
-                :true-label="1"
-                :false-label="0"
-                size="small"
-              />
+                :active-value="1"
+                :inactive-value="0"
+                active-text="是"
+                inactive-text="否"
+              >
+              </el-switch>
             </el-form-item>
           </el-col>
-          <el-col :span="8">
+          <el-col :span="7">
             <el-form-item label="开业时间：" prop="openTime">
               <el-date-picker
                 v-model="dialogData.model.openTime"
@@ -465,9 +467,9 @@ import {
   orgDelete,
   getOrgSelectList,
   getCitySelectList,
-} from "../../../api/organization";
-import { getBusinessList } from "../../../api/business";
-import { OrgType, IsOrg } from "@/utils/enum";
+} from "../../../api/manager/organization";
+import { getBusinessList } from "../../../api/manager/business";
+import { OrgTypeEnum, IsOrgEnum } from "@/utils/enum";
 import { formatDateTime } from "@/utils/common";
 
 const maxSearchCount = 10;
@@ -505,8 +507,8 @@ export default {
       loading: false,
       searching: false,
       keyword: "",
-      orgTypeEnumList: OrgType.items(),
-      isOrgEnumList: IsOrg.items(),
+      orgTypeEnumList: OrgTypeEnum.items(),
+      isOrgEnumList: IsOrgEnum.items(),
       businessList: [],
       orgs: [],
       id: "",
@@ -529,14 +531,11 @@ export default {
         modified: false,
         rules: {
           name: [{ required: true, message: "请输入单位名称" }],
-          nameFullPy: [
-            { required: true, message: "请输入单位名称的拼音（全拼）" },
-          ],
+          nameFullPy: [{ required: true, message: "请输入单位名称的拼音（全拼）" }],
           namePy: [{ required: true, message: "请输入单位名称的拼音（简拼）" }],
           groupId: [{ required: true, message: "请输入GroupId（OrgId）" }],
           orgType: [{ required: true, message: "请选择机构类型" }],
           isOrg: [{ required: true, message: "请选择单位类型" }],
-          openTime: [{ required: true, message: "请选择开业日期" }],
         },
       },
     };
@@ -553,11 +552,16 @@ export default {
   },
   filters: {
     formatNodeType(type) {
-      return OrgType.getName(type, "未知");
+      return OrgTypeEnum.getName(type, "未知");
     },
     dateFormat(value, dateStr) {
-      dateStr = dateStr || "yyyy-MM-dd hh:mm:ss";
-      return formatDateTime(new Date(value), dateStr);
+      if(value == '0001-01-01T00:00:00'){
+        return ''
+      }
+      else{
+        dateStr = dateStr || "yyyy-MM-dd hh:mm:ss";
+        return formatDateTime(new Date(value), dateStr);
+      }
     },
   },
   methods: {
@@ -623,7 +627,7 @@ export default {
       this.bindClear();
       this.dialogData.edit = true;
       this.dialogData.model = Object.assign({}, data);
-      //this.dialogData.model.businessType = this.dialogData.model.businessType==0 ? '' : this.dialogData.model.businessType
+      this.dialogData.model.openTime = this.dialogData.model.openTime=='0001-01-01T00:00:00' ? '' : this.dialogData.model.openTime
       this.dialogData.show = true;
       this.$nextTick(() => {
         this.$refs.orgForm.clearValidate();
@@ -646,15 +650,12 @@ export default {
     },
     bindDialogConfirm() {
       this.$refs.orgForm.validate((valid) => {
-        //alert(this.dialogData.model.cityId+":"+this.dialogData.model.cityName+"|"+this.dialogData.model.parentActualId+":"+this.dialogData.model.parentActualName);
-
         if (valid) {
           this.dialogData.saving = true;
           this.dialogData.show = false;
           this.dialogData.saving = false;
           this.id = this.dialogData.model.parentId;
-          //var entity = this.dialogData.model
-          //entity.businessType = entity.businessType == '' ? 0 : entity.businessType
+          this.dialogData.model.openTime =  this.dialogData.model.openTime || '0001-01-01T00:00:00'
           saveOrg(this.dialogData.model)
             .then((res) => {
               this.$message.success("保存成功");

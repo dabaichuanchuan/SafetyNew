@@ -4,7 +4,7 @@ import Router from 'vue-router'
 Vue.use(Router)
 
 import Layout from '../views/layout/Layout'
-import {loadTree} from "../api/menu";
+import { loadTree } from "../api/manager/menu";
 
 export const constantRouterMap = [
   { path: '/login', component: () => import('@/pages/index/views/login/index'), hidden: true },
@@ -32,48 +32,48 @@ export const constantRouterMap = [
 ]
 
 export const asyncRouterMap = [
-  // {
-  //   path:'/test',
-  //   component: Layout,
-  //   redirect: '/test/index',
-  //   name: 'test',
-  //   meta: { title: '考试管理', icon: 'test', roles: 3 },
-  //   children: [
-  //     {
-  //       path: 'index',
-  //       name: 'index',
-  //       component: () => import('../views/test/index'),
-  //       meta: { title: '试卷列表', icon: 'test-paper', roles: 3 }
-  //     },
-  //     {
-  //       path: 'detail',
-  //       name: 'detail',
-  //       component: () => import('../views/test/detail'),
-  //       meta: { title: '试卷编制', icon: 'test-detail', keepAlive: false, roles: 1 }
-  //     },
-  //     {
-  //       path: 'link',
-  //       name: 'link',
-  //       component: () => import('../views/test/link'),
-  //       meta: { title: '链接与二维码' },
-  //       hidden: true
-  //     },
-  //     {
-  //       path: 'result',
-  //       name: 'result',
-  //       component: () => import('../views/test/result'),
-  //       meta: { title: '下载成绩' },
-  //       hidden: true
-  //     },
-  //     {
-  //       path: 'ranking',
-  //       name: 'ranking',
-  //       component: () => import('../views/test/ranking'),
-  //       meta: { title: '考试排名' },
-  //       hidden: true
-  //     }
-  //   ]
-  // },
+  {
+    path: '/test',
+    component: Layout,
+    redirect: '/test/index',
+    name: 'test',
+    meta: { title: '考试管理', icon: 'test', roles: 3 },
+    children: [
+      {
+        path: 'index',
+        name: 'index',
+        component: () => import('../views/test/index'),
+        meta: { title: '试卷列表', icon: 'test-paper', roles: 3 }
+      },
+      {
+        path: 'detail',
+        name: 'detail',
+        component: () => import('../views/test/detail'),
+        meta: { title: '试卷编制', icon: 'test-detail', keepAlive: false, roles: 1 }
+      },
+      {
+        path: 'link',
+        name: 'link',
+        component: () => import('../views/test/link'),
+        meta: { title: '链接与二维码' },
+        hidden: true
+      },
+      {
+        path: 'result',
+        name: 'result',
+        component: () => import('../views/test/result'),
+        meta: { title: '下载成绩' },
+        hidden: true
+      },
+      {
+        path: 'ranking',
+        name: 'ranking',
+        component: () => import('../views/test/ranking'),
+        meta: { title: '考试排名' },
+        hidden: true
+      }
+    ]
+  },
   {
     path: '/manager',
     component: Layout,
@@ -124,19 +124,19 @@ export const asyncRouterMap = [
         meta: { title: '菜单管理', icon: 'menu', roles: 4 }
       },
       {
-        path: 'dict',
-        name: 'dict',
-        component: () => import('../views/manager/dict/index'),
+        path: 'dictionary',
+        name: 'dictionary',
+        component: () => import('../views/manager/dictionary/index'),
         meta: { title: '字典管理', icon: 'form', roles: 4 }
       }
     ]
   }
-  ,{ path: '*', redirect: '/404', hidden: true }
+  , { path: '*', redirect: '/404', hidden: true }
 ]
- 
+
 export default new Router({
-  mode: 'hash',    
+  mode: 'hash',
   loadTree: [],
   scrollBehavior: () => ({ y: 0 }),
-  routes: constantRouterMap  
+  routes: constantRouterMap
 })

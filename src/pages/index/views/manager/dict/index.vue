@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
-    <el-row type="flex">
-      <el-col :span="6">
+    <el-row>
+      <el-col :span="8">
         <el-card class="table-container" shadow="hover">
           <div class="icon-area">
             <i class="el-icon-tickets"></i>
@@ -25,46 +25,42 @@
               :filter-node-method="filterNode"
               accordion
               style="margin-top: 10px"
+              #default="{ node, data }"
             >
-              <template #default="{ node, data }">
-                <span class="custom-tree-node">
-                  <el-button
-                    size="mini"
-                    type="text"
-                    @click="bindSearchList(data.id)"
-                    >{{ node.label }}</el-button
+              <span class="custom-tree-node">
+                <el-button
+                  style="color: #909399"
+                  type="text"
+                  size="mini"
+                  @click="bindSearchList(data.id)"
+                  >{{ node.label }}</el-button
+                >
+                <span>
+                  <el-button type="text" size="mini" @click="bindCreate(data)"
+                    >添加类型</el-button
                   >
-                  <span>
-                    <template>
-                      <el-button
-                        size="mini"
-                        type="text"
-                        @click="bindCreate(data)"
-                        >添加类型</el-button
-                      >
-                    </template>
-                    <template>
-                      <el-button
-                        size="mini"
-                        type="text"
-                        @click="bindCreateData(data)"
-                        >添加数据</el-button
-                      >
-                    </template>
-                    <template v-if="node.level !== 1">
-                      <el-divider direction="vertical" />
-                      <el-button size="mini" type="text" @click="bindEdit(data)"
-                        >编辑类型</el-button
-                      >
-                    </template>
-                  </span>
+                  <el-button
+                    v-if="node.level !== 1"
+                    style="color: #67c23a"
+                    type="text"
+                    size="mini"
+                    @click="bindEdit(data)"
+                    >编辑类型</el-button
+                  >
+                  <el-button
+                    style="color: #E6A23C"
+                    type="text"
+                    size="mini"
+                    @click="bindCreateData(data)"
+                    >添加数据</el-button
+                  >
                 </span>
-              </template>
+              </span>
             </el-tree>
           </div>
         </el-card>
       </el-col>
-      <el-col :span="18">
+      <el-col :span="16">
         <el-card class="table-container" shadow="hover">
           <div class="icon-area">
             <i class="el-icon-tickets"></i>
@@ -72,7 +68,7 @@
           </div>
           <div class="table-area">
             <el-table
-              ref="busTable"
+              ref="defaultTable"
               :data="list"
               size="small"
               v-loading="listLoading"
@@ -88,7 +84,9 @@
                 <template slot-scope="scope">{{ scope.row.orderNo }}</template>
               </el-table-column>
               <el-table-column label="描述" align="center">
-                <template slot-scope="scope">{{ scope.row.description }}</template>
+                <template slot-scope="scope">{{
+                  scope.row.description
+                }}</template>
               </el-table-column>
               <el-table-column label="时间" align="center" width="210">
                 <template slot-scope="scope">
@@ -127,7 +125,7 @@
     <el-dialog
       :title="dialogData.edit ? '编辑字典类型' : '添加字典类型'"
       :visible.sync="dialogData.show"
-      width="50%"
+      width="40%"
     >
       <el-form
         :model="dialogData.model"
@@ -152,13 +150,15 @@
             <el-form-item label="企业：" prop="tenantId">
               <el-select
                 v-model="dialogData.model.tenantId"
-                placeholder="请选择" disabled 
+                placeholder="请选择"
+                disabled
               >
                 <el-option
                   v-for="item in enterpriseOptions"
                   :key="item.id"
                   :label="item.name"
                   :value="item.id"
+                  show-word-limit
                 >
                 </el-option>
               </el-select>
@@ -178,7 +178,7 @@
           </el-col>
         </el-row>
         <el-row>
-          <el-col :span="8">
+          <el-col :span="12">
             <el-form-item label="序号：" prop="orderNo">
               <el-input-number
                 v-model="dialogData.model.orderNo"
@@ -189,7 +189,7 @@
               </el-input-number>
             </el-form-item>
           </el-col>
-          <el-col :span="8">
+          <el-col :span="12">
             <el-form-item label="是否启用：" prop="flag">
               <el-switch
                 v-model="dialogData.model.flag"
@@ -197,12 +197,12 @@
                 :inactive-value="1"
                 active-text="是"
                 inactive-text="否"
+                show-word-limit
               >
               </el-switch>
             </el-form-item>
           </el-col>
         </el-row>
-        
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogData.show = false" size="small"
@@ -220,7 +220,7 @@
     <el-dialog
       :title="dialogData1.edit ? '编辑字典数据' : '添加字典数据'"
       :visible.sync="dialogData1.show"
-      width="50%"
+      width="40%"
     >
       <el-form
         :model="dialogData1.model"
@@ -253,17 +253,18 @@
           </el-col>
         </el-row>
         <el-row>
-          <el-col :span="12">
-            <el-form-item label="序号：" prop="seq">
-              <el-input
-                v-model="dialogData1.model.seq"
-                :maxlength="50"
-                show-word-limit
-              >
-              </el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12"> </el-col>
+          <el-row>
+            <el-col :span="24">
+              <el-form-item label="描述：" prop="description">
+                <el-input
+                  v-model="dialogData1.model.description"
+                  :maxlength="225"
+                  show-word-limit
+                >
+                </el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
         </el-row>
         <el-row>
           <el-col :span="12">
@@ -288,14 +289,28 @@
           </el-col>
         </el-row>
         <el-row>
-          <el-col :span="24">
-            <el-form-item label="描述：" prop="description">
-              <el-input
-                v-model="dialogData1.model.description"
-                :maxlength="225"
+          <el-col :span="12">
+            <el-form-item label="序号：" prop="orderNo">
+              <el-input-number
+                v-model="dialogData1.model.orderNo"
+                :min="1"
+                :max="9999999"
                 show-word-limit
               >
-              </el-input>
+              </el-input-number>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="是否启用：" prop="flag">
+              <el-switch
+                v-model="dialogData1.model.flag"
+                :active-value="0"
+                :inactive-value="1"
+                active-text="是"
+                inactive-text="否"
+                show-word-limit
+              >
+              </el-switch>
             </el-form-item>
           </el-col>
         </el-row>
@@ -323,14 +338,14 @@ import {
   saveDictType,
   saveDictData,
 } from "../../../api/dict";
-import { getEnterpriseList } from "../../../api/enterprise";
+import { getEnterpriseList } from "../../../api/manager/enterprise";
 import { CommonFlagEnum } from "@/utils/enum";
 import { formatDateTime } from "@/utils/common";
 
 const defaultListQuery = {
   keyWord: "",
   dicttypeId: "",
-  tenantId: '',
+  tenantId: "",
   flag: "",
   pageNum: 1,
   pageSize: 10,
@@ -340,7 +355,7 @@ const defaultModel = {
   id: "",
   name: "",
   parentId: "",
-  orderNo: "",
+  orderNo: 0,
   description: "",
   tenantId: "",
   flag: 0,
@@ -354,7 +369,7 @@ const defaultDataModel = {
   description: "",
   property1: "",
   property2: "",
-  orderNo: "",
+  orderNo: 0,
   flag: 0,
 };
 
@@ -386,6 +401,7 @@ export default {
         model: Object.assign({}, defaultModel),
         rules: {
           name: [{ required: true, message: "请输入名称" }],
+          parentId: [{ required: true, message: "请选择父级" }],
           orderNo: [{ required: true, message: "请输入序号" }],
           flag: [{ required: true, message: "请输选择启用状态" }],
         },
@@ -397,6 +413,7 @@ export default {
         model: Object.assign({}, defaultDataModel),
         rules: {
           name: [{ required: true, message: "请输入名称" }],
+          value: [{ required: true, message: "请输入值" }],
           orderNo: [{ required: true, message: "请输入序号" }],
           flag: [{ required: true, message: "请输选择启用状态" }],
         },
@@ -448,7 +465,7 @@ export default {
       });
     },
     bindSearchList(id) {
-      defaultListQuery.dicttypeid = id;
+      defaultListQuery.dicttypeId = id;
       this.listQuery = Object.assign(this.listQuery, defaultListQuery);
       this.getList();
     },
@@ -503,7 +520,7 @@ export default {
 
     bindCreateData(row) {
       this.dialogData1.edit = false;
-      defaultDataModel.dicttypeid = row.id;
+      defaultDataModel.dicttypeId = row.id;
       this.dialogData1.model = Object.assign({}, defaultDataModel);
       this.dialogData1.show = true;
       this.$nextTick(() => this.$refs.defaultDataForm.clearValidate());

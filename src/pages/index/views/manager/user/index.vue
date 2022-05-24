@@ -20,46 +20,62 @@
       </div>
       <div class="where-area">
         <el-form :inline="true" :model="listQuery" size="small" label-width="100px">
-          <el-form-item label="输入搜索：">
-            <el-input v-model="listQuery.keyword" class="input-width" placeholder="请输入关键字" clearable></el-input>
-          </el-form-item>
-          <el-form-item label="状态：">
-            <el-select v-model="listQuery.status" class="input-width" clearable placeholder="请选择">
-              <el-option
-                v-for="item in statusOptions"
-                :key="item.value"
-                :label="item.name"
-                :value="item.value">
-              </el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item label="添加时间：">
-            <el-date-picker
-              v-model="listQuery.spans"
-              class="input-width"
-              type="daterange"
-              unlink-panels
-              range-separator="-"
-              start-placeholder="开始日期"
-              end-placeholder="结束日期"
-              :default-time="['00:00:00', '23:59:59']"
-              :picker-options="pickerOptions">
-            </el-date-picker>
-          </el-form-item>
-          <el-form-item label="角色：">
-            <el-select 
-              v-model="searchRolesFlagsValue" 
-              class="input-width" 
-              multiple collapse-tags
-              placeholder="请选择">
-              <el-option
-                v-for="item in rolesOptions"
-                :key="item.flag"
-                :label="item.name"
-                :value="item.flag">
-              </el-option>
-            </el-select>
-          </el-form-item>
+          <el-row>
+            <el-form-item label="输入搜索：">
+              <el-input v-model="listQuery.keyword" class="input-width" placeholder="请输入关键字" clearable></el-input>
+            </el-form-item>
+            <el-form-item label="是否启用：">
+              <el-select v-model="listQuery.flag" class="input-width" clearable placeholder="请选择">
+                <el-option
+                  v-for="item in flagOptions"
+                  :key="item.value"
+                  :label="item.name"
+                  :value="item.value">
+                </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="创建时间：">
+              <el-date-picker
+                v-model="listQuery.spans"
+                class="input-width"
+                type="daterange"
+                unlink-panels
+                range-separator="-"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+                :default-time="['00:00:00', '23:59:59']"
+                :picker-options="pickerOptions">
+              </el-date-picker>
+            </el-form-item>
+          </el-row>
+          <el-row>
+            <el-form-item label="企业：">
+              <el-select 
+                v-model="listQuery.tenantId" 
+                show-word-limit
+                clearable
+                placeholder="请选择">
+                <el-option
+                  v-for="item in enterpriseOptions"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id">
+                </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="单位：">
+              <template>
+                <el-autocomplete
+                  v-model="listQuery.orgName"
+                  :fetch-suggestions="querySearchOrgAsync"
+                  value-key="name"
+                  placeholder="请输入关键词"
+                  :trigger-on-focus="false"
+                  @select="searchSelectOrg"
+                />
+              </template>
+            </el-form-item>
+          </el-row>
         </el-form>
       </div>
     </el-card>
@@ -81,37 +97,33 @@
                   :data="list"
                   size="small"
                   v-loading="listLoading" border>
-          <el-table-column label="账户名" align="center">
-            <template slot-scope="scope">{{scope.row.account}}</template>
-          </el-table-column>
           <el-table-column label="姓名" align="center">
-            <template slot-scope="scope">{{scope.row.fullname}}</template>
+            <template slot-scope="scope">{{scope.row.name}}</template>
+          </el-table-column>
+          <el-table-column label="用户名" align="center">
+            <template slot-scope="scope">{{scope.row.userName}}</template>
+          </el-table-column>
+          <el-table-column label="单位" align="center">
+            <template slot-scope="scope">{{scope.row.orgName}}</template>
+          </el-table-column>
+          <el-table-column label="企业" align="center">
+            <template slot-scope="scope">{{scope.row.tenantName}}</template>
           </el-table-column>
           <el-table-column label="岗位" align="center">
-            <template slot-scope="scope">{{scope.row.jobs}}</template>
+            <template slot-scope="scope">{{scope.row.positionName}}</template>
           </el-table-column>
-          <el-table-column label="角色" align="center">
-            <template slot-scope="scope">{{scope.row.roles|formatRoles}}</template>
+          <el-table-column label="创建时间" align="center" width="210">
+            <template slot-scope="scope">{{scope.row.createrTime|formatTime}}</template>
           </el-table-column>
-          <el-table-column label="时间" align="center" width="210">
+          <el-table-column label="是否启用" align="center" width="80">
             <template slot-scope="scope">
-              <div>创建时间：{{scope.row.created|formatTime}}</div>
-              <div>最后登录：{{scope.row.last_login|formatTime}}</div>
-            </template>
-          </el-table-column>
-          <el-table-column label="状态" align="center" width="80">
-            <template slot-scope="scope">
-              <span :class="`user-status${scope.row.status}`">{{scope.row.status|formatStatusName}}</span>
+              <span :class="`user-status${scope.row.flag}`">{{scope.row.flag|formatFlagName}}</span>
             </template>
           </el-table-column>
           <el-table-column label="操作" align="center" width="150">
             <template slot-scope="scope">
-              <div v-if="0>scope.row.roles">不支持</div>
-              <div v-else>
+              <div>
                 <el-button size="mini" type="text" @click="bindEdit(scope.$index, scope.row)">编辑</el-button>
-                <el-button :loading="scope.$index==rowLoading" v-if="isStatusKey(scope.row, 'Normal')" size="mini" type="text" @click="bindModifyStatus(scope.$index, 'Locked', scope.row)">锁定</el-button>
-                <el-button :loading="scope.$index==rowLoading" v-else-if="isStatusKey(scope.row, 'Locked')" size="mini" type="text" @click="bindModifyStatus(scope.$index, 'Normal', scope.row)">恢复</el-button>
-                <el-button :loading="scope.$index==rowLoading" :disabled="!!scope.row.system" v-if="!isStatusKey(scope.row, 'Deleted')" size="mini" type="text" @click="bindModifyStatus(scope.$index, 'Deleted', scope.row)">删除</el-button>
               </div>
             </template>
           </el-table-column>
@@ -139,53 +151,142 @@
         ref="userForm"
         class="user-form"
         :rules="dialogData.rules"
-        label-width="105px" size="small">
+        label-width="120px" size="small">
         <el-row>
-          <el-col :span="12">
-            <el-form-item label="登录账号：" prop="account">
+          <el-col :span="10">
+            <el-form-item label="姓名：" prop="name">
               <el-input 
-                v-model="dialogData.model.account" 
-                :maxlength="64" show-word-limit>
-              </el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="姓名：" prop="fullname">
-              <el-input 
-                v-model="dialogData.model.fullname" 
+                v-model="dialogData.model.name" 
                 :maxlength="64" show-word-limit>
               </el-input>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
-          <el-col :span="12">
-            <el-form-item label="登录密码：" prop="password">
+          <el-col :span="10">
+            <el-form-item label="用户名：" prop="userName">
               <el-input 
-                v-model="dialogData.model.password" 
-                :maxlength="64" show-word-limit>
+                v-model="dialogData.model.userName" 
+                :maxlength="50" show-word-limit>
               </el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="12">
-            <el-form-item label="岗位：" prop="jobs">
+          <el-col :span="10">
+            <el-form-item label="密码：" v-if="!dialogData.edit" prop="passWord">
               <el-input 
-                v-model="dialogData.model.jobs" 
+                v-model="dialogData.model.passWord" 
+                type="password"
+                placeholder="请输入密码"
+                show-password
+                :maxlength="50" show-word-limit>
+              </el-input>
+            </el-form-item>
+            <el-form-item label="密码：" v-else prop="newPassWord">
+              <el-input 
+                v-model="dialogData.model.newPassWord" 
+                type="password"
+                placeholder="请输入新密码"
+                show-password
+                :maxlength="50" show-word-limit>
+              </el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="10">
+            <el-form-item label="手机号：" prop="mobile">
+              <el-input 
+                v-model="dialogData.model.mobile" 
+                :maxlength="50" show-word-limit>
+              </el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="10">
+            <el-form-item label="邮箱：" prop="email">
+              <el-input 
+                v-model="dialogData.model.email" 
+                :maxlength="50" show-word-limit>
+              </el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="10">
+            <el-form-item label="RtxUserID：" prop="rtxUserId">
+              <el-input 
+                v-model="dialogData.model.rtxUserId" 
+                :maxlength="50" show-word-limit>
+              </el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="10">
+            <el-form-item label="岗位：" prop="positionName">
+              <el-input 
+                v-model="dialogData.model.positionName" 
                 :maxlength="64" show-word-limit>
               </el-input>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
-          <el-col :span="24">
-            <el-form-item label="角色：" prop="roles">
-              <el-checkbox-group v-model="selectRolesFlagsValue">
-                <el-checkbox v-for="item in dialogData.rolesOptions"
-                  :key="item.flag"
-                  :label="item.flag">
-                  {{item.name}}
-                </el-checkbox>
-              </el-checkbox-group>
+          <el-col :span="10">
+            <el-form-item label="单位：" prop="orgId">
+              <template>
+                <el-autocomplete
+                  v-model="dialogData.model.orgName"
+                  :fetch-suggestions="querySearchOrgAsync"
+                  value-key="name"
+                  placeholder="请输入关键词"
+                  :trigger-on-focus="false"
+                  @select="handleSelectOrg"
+                />
+              </template>
+            </el-form-item>
+          </el-col>
+          <el-col :span="10">
+            <el-form-item label="性别：" prop="sex">
+              <el-switch
+                v-model="dialogData.model.sex"
+                :active-value="1"
+                :inactive-value="0"
+                active-text="男"
+                inactive-text="女"
+                active-color="#70DB93"
+                inactive-color="#FF6EC7"
+              >
+              </el-switch>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="10">
+            <el-form-item label="企业：" prop="tenantId">
+              <el-select
+                v-model="dialogData.model.tenantId" 
+                show-word-limit
+                clearable
+                placeholder="请选择"
+              >
+                <el-option
+                  v-for="item in enterpriseOptions"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id"
+                >
+                </el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="10">
+            <el-form-item label="是否启用：" prop="flag">
+              <el-switch
+                v-model="dialogData.model.flag"
+                :active-value="0"
+                :inactive-value="1"
+                active-text="是"
+                inactive-text="否"
+              >
+              </el-switch>
             </el-form-item>
           </el-col>
         </el-row>
@@ -198,28 +299,40 @@
   </div>
 </template>
 <script>
-  import { modifyUserStatus, getUserPage, saveUserDetail, accountExists } from '../../../api/user'
-  import { UserStatus, UserRoles, flagsToItems, itemsToFlags } from '@/utils/enum'
+  import { getUserPage, saveUserDetail, userExists } from '../../../api/manager/user'
+  import { getOrgSelectList } from "../../../api/manager/organization";
+  import { getEnterpriseList } from '../../../api/manager/enterprise'
+  import { CommonFlagEnum } from '@/utils/enum'
   import { formatDateTime } from '@/utils/common'
 
   const defaultListQuery = {
-    bid: '',
-    keyword: '',
+    keyWord: '',
+    flag: '',
     spans: null,
-    roles: '',
-    status: '',
+    tenantId: '',
+    orgId: '',
+    orgName: '',
     pageNum: 1,
     pageSize: 5
   }
 
   const defaultUserModel = {
     id: '',
-    bid: '',
-    jobs: '',
-    account: '',
-    password: '',
-    fullname: '',
-    roles: '',
+    name: '',
+    userName: '',
+    passWord: '',
+    newPassWord: '',
+    mobile: '',
+    email: '',
+    rtxUserId: '',
+    sex: 1,
+    orgId: '',
+    orgName: '',
+    tenantId: '',
+    tenantName: '',
+    piositionId: '',
+    positionName: '',
+    flag: 0,
   }
 
   export default {
@@ -231,36 +344,42 @@
         total: 0,
         listLoading: false,
         rowLoading: -1,
-        statusOptions: UserStatus.items(),
-        rolesOptions: UserRoles.items(),
+        flagOptions: CommonFlagEnum.items(),
+        enterpriseOptions: [],
+        orgSelectList: [],
+        searchOrgIdchange:false,
+        orgIdchange:false,
         dialogData: {
           show: false,
           saving: false,
           edit: false,
           model: Object.assign({}, defaultUserModel),
-          rolesOptions: UserRoles.items(),
+          modified: false,
           rules: {
-            account: [
-              { required: true, message: '请输入账号' },
-              { validator: (role, value, callback) => {
+            name: [
+              { required: true, message: '请输入姓名' }
+            ],
+            userName: [
+              { required: true, message: '请输入用户名' },
+              { validator: (rule, value, callback) => {
                   if(!value) {
                     callback()
                   } else {
-                    accountExists({ name: value, id: this.dialogData.model.id }).then(res => {
+                    userExists({ userName: value, id: this.dialogData.model.id }).then(res => {
                       return res.data ? callback(new Error('该用户名已存在')) : callback()
                     })
                   }
                 } 
               }
             ],
-            fullname: [
-              { required: true, message: '请输入姓名' }
+            passWord: [
+              { required: true, message: '请输入密码' }
             ],
-            jobs: [
-              { required: true, message: '请输入岗位' }
+            orgId: [
+              { required: true, message: '请输入并选择单位' }
             ],
-            roles: [
-              { required: true, message: '请选择角色' }
+            tenantId: [
+              { required: true, message: '请选择企业' }
             ]
           }
         },
@@ -294,43 +413,46 @@
       }
     },
     computed: {
-      searchRolesFlagsValue: {
-        get: function() {
-          return flagsToItems(this.listQuery.roles)
-        },
-        set: function(nval) {
-          this.listQuery.roles = itemsToFlags(nval, '')
-        }
-      },
-      selectRolesFlagsValue: {
-        get: function() {
-          return flagsToItems(this.dialogData.model.roles)
-        },
-        set: function(nval) {
-          this.dialogData.model.roles = itemsToFlags(nval, '')
-        }
-      }
+      
     },
     created() {
-      if(this.$route.query.bid) {
-       defaultListQuery.bid = defaultUserModel.bid = this.listQuery.bid = this.$route.query.bid
-      }
       this.getList()
+      this.getEnterpriseOptions() 
+    },
+    watch: {
+      'dialogData.model.orgId'(val) {
+        this.orgIdchange = true;
+      },
+      'dialogData.model.orgName'(newval,oldval) {
+        if(!this.orgIdchange && newval != oldval){
+          this.dialogData.model.orgId=''
+        }
+        this.orgIdchange = false;
+      },
+      'listQuery.orgId'(val) {
+        this.searchOrgIdchange = true;
+      },
+      'listQuery.orgName'(newval,oldval) {
+        if(!this.searchOrgIdchange && newval != oldval){
+          this.listQuery.orgId = ''
+        }
+        this.searchOrgIdchange = false;
+      },
     },
     filters: {
       formatTime(time) {
         return time ? formatDateTime(new Date(time), 'yyyy-MM-dd hh:mm:ss') : '无记录'
       },
-      formatStatusName(status) {
-        return UserStatus.getName(status)
-      },
-      formatRoles(roles) {
-        return 0 > roles ? '系统管理员' : UserRoles.getNames(roles, '未配置')
+      formatFlagName(flag) {
+        return CommonFlagEnum.getName(flag)
       }
     },
-    methods: {
-      isStatusKey(row, key) {
-        return row.status == UserStatus[key].value
+    methods: {   
+      getEnterpriseOptions() {
+        const query = {}
+        getEnterpriseList(query).then(res => {
+          this.enterpriseOptions = res.data
+        })
       },
       getList(paged) {
         if(!paged) this.listQuery.pageNum = 1
@@ -355,37 +477,9 @@
         this.listQuery.pageNum = val
         this.getList(true)
       },
-      bindModifyStatus(index, status, row) {
-        switch(status) {
-          case 'Normal': 
-            this.modifyStatus(index, row.id, UserStatus[status].value); break
-          case 'Locked': 
-            this.$confirm('将状态设为“锁定”，该用户将无法登录，是否继续？', '提示', { type: 'warning' })
-            .then(() => {
-              this.modifyStatus(index, row.id, UserStatus[status].value)
-            }).catch(() => {}); break
-          case 'Deleted': 
-            this.$confirm('如“删除”该用户，相关数据都将删除，是否继续？', '提示', { type: 'warning' })
-            .then(() => {
-              this.modifyStatus(index, row.id, UserStatus[status].value)
-            }).catch(() => {}); break
-        }
-      },
-      modifyStatus(index, uid, status) {
-        this.rowLoading = index
-        return modifyUserStatus(uid, status).then(res => {
-          if(res.data) {
-            this.getList()
-            this.$message.success('修改成功')
-          } else {
-            this.$message.error('修改失败')
-          }
-        }).catch(() => {}).then(() =>  this.rowLoading = -1)
-      },
       bindEdit(index, row) {
         this.dialogData.edit = true
         this.dialogData.model = Object.assign({}, row)
-        this.dialogData.model.password = ''
         this.dialogData.show = true
         this.$nextTick(() => this.$refs.userForm.clearValidate())
       },
@@ -415,7 +509,26 @@
             this.$message.error('验证失败')
           }
         })
-      }
+      },
+      querySearchOrgAsync(queryString, cb) {
+        if (queryString) {
+          getOrgSelectList({ keyword: queryString.trim() }).then((res) => {
+            this.orgSelectList = res.data;
+          });
+        }
+        setTimeout(() => {
+          cb(this.orgSelectList);
+        }, 200);
+      },
+      handleSelectOrg(item) {
+        this.dialogData.model.orgId = item.id;
+        this.dialogData.model.orgName = item.name;
+        console.log(item);
+      },
+      searchSelectOrg(item) {
+        this.listQuery.orgId = item.id;
+        this.listQuery.orgName = item.name;
+      },
     }
   }
 </script>

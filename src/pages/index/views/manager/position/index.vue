@@ -19,7 +19,7 @@
           size="small"
           label-width="100px"
         >
-          <el-form-item label="输入搜索：">
+          <el-form-item label="关键字：">
             <el-input
               v-model="listQuery.keyWord"
               class="input-width"
@@ -32,7 +32,7 @@
               v-model="listQuery.tenantId"
               class="input-width"
               clearable
-              placeholder="请选择"
+              placeholder="全部"
             >
               <el-option
                 v-for="item in enterpriseOptions"
@@ -48,7 +48,7 @@
               v-model="listQuery.business"
               class="input-width"
               clearable
-              placeholder="请选择"
+              placeholder="全部"
             >
               <el-option
                 v-for="item in businessOptions"
@@ -65,7 +65,7 @@
               v-model="listQuery.grade"
               class="input-width"
               clearable
-              placeholder="请选择"
+              placeholder="全部"
             >
               <el-option
                 v-for="item in orgTypeOptions"
@@ -81,7 +81,7 @@
               v-model="listQuery.flag"
               class="input-width"
               clearable
-              placeholder="请选择"
+              placeholder="全部"
             >
               <el-option
                 v-for="item in flagOptions"
@@ -303,9 +303,9 @@
   </div>
 </template>
 <script>
-import { savePositionDetail, getPositionPage } from "../../../api/position";
-import { getBusinessList } from "../../../api/business";
-import { getEnterpriseList } from "../../../api/enterprise";
+import { savePositionDetail, getPositionPage } from "../../../api/manager/position";
+import { getBusinessList } from "../../../api/manager/business";
+import { getEnterpriseList } from "../../../api/manager/enterprise";
 import { CommonFlagEnum, OrgTypeEnum } from "@/utils/enum";
 import { formatDateTime } from "@/utils/common";
 

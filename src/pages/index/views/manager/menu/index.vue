@@ -18,7 +18,7 @@
           size="small"
           label-width="100px"
         >
-          <el-form-item label="输入搜索：">
+          <el-form-item label="关键字：">
             <el-input
               v-model="listQuery.keyWord"
               placeholder="请输入关键字"
@@ -30,7 +30,7 @@
               v-model="listQuery.type"
               class="input-width"
               clearable
-              placeholder="请选择"
+              placeholder="全部"
             >
               <el-option
                 v-for="item in menuTypOptions"
@@ -42,7 +42,12 @@
             </el-select>
           </el-form-item>
           <el-form-item label="是否显示：">
-            <el-select v-model="listQuery.flag" class="input-width" clearable>
+            <el-select
+              v-model="listQuery.flag"
+              class="input-width"
+              clearable
+              placeholder="全部"
+            >
               <el-option
                 v-for="item in flagOptions"
                 :key="item.value"
@@ -301,7 +306,7 @@ import {
   getMenuParentList,
   saveMenu,
   loadTree,
-} from "../../../api/menu";
+} from "../../../api/manager/menu";
 import { CommonFlagEnum, MenuTypeEnum } from "@/utils/enum";
 import { formatDateTime } from "@/utils/common";
 
