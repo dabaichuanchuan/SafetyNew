@@ -88,10 +88,10 @@ export const asyncRouterMap = [
         meta: { title: '企业管理', icon: 'enterprise', roles: 1024 }
       },
       {
-        path: 'org',
-        name: 'org',
-        component: () => import('../views/manager/org/index'),
-        meta: { title: '单位管理', icon: 'org', roles: 1024 }
+        path: 'organization',
+        name: 'organization',
+        component: () => import('../views/manager/organization/index'),
+        meta: { title: '单位管理', icon: 'organization', roles: 1024 }
       },
       {
         path: 'business',
