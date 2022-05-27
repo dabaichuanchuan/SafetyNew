@@ -26,7 +26,7 @@
               clearable
             ></el-input>
           </el-form-item>
-          <el-form-item label="状态：">
+          <el-form-item label="是否启用：">
             <el-select
               v-model="listQuery.flag"
               class="input-width"

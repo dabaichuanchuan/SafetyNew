@@ -743,6 +743,8 @@ export default {
     },
     bindNodeClick(data) {
       this.$emit("org-click", data);
+      this.dataModelShow = true;
+      this.dataModel = data;
     },
   },
 };
