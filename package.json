@@ -10,6 +10,7 @@
     "build": "node build/build.js"
   },
   "dependencies": {
+    "@form-create/element-ui": "^2.5.21",
     "axios": "^0.24.0",
     "element-ui": "^2.15.7",
     "es6-promise": "^4.2.8",

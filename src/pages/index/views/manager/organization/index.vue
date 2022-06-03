@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <el-card class="orgs-bg">
-      <div slot="header" class="clearfix">
+      <div slot="header" >
         <span>单位管理</span>
         <el-form :inline="true" size="small" style="float: right">
           <el-form-item label="输入搜索：" style="margin: 0">
@@ -272,7 +272,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="10">
-            <el-form-item label="公司名称" prop="companyName">
+            <el-form-item label="公司名称：" prop="companyName">
               <el-input
                 v-model="dialogData.model.companyName"
                 :maxlength="100"
@@ -329,7 +329,7 @@
         </el-row>
         <el-row>
           <el-col :span="10">
-            <el-form-item label="所在城市" prop="cityId">
+            <el-form-item label="所在城市：" prop="cityId">
               <template>
                 <el-autocomplete
                   v-model="dialogData.model.cityName"

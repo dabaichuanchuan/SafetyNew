@@ -130,6 +130,27 @@ export const asyncRouterMap = [
         meta: { title: '字典管理', icon: 'form', roles: 4 }
       }
     ]
+  },
+  {
+    path: '/template',
+    component: Layout,
+    redirect: '/template/index',
+    name: 'template',
+    meta: { title: '自定义表单', icon: 'test', roles: 3 },
+    children: [
+      {
+        path: 'index',
+        name: 'index',
+        component: () => import('../views/template/index'),
+        meta: { title: '新建表单', icon: 'test-paper', roles: 3 }
+      },
+      {
+        path: 'detail',
+        name: 'detail',
+        component: () => import('../views/template/detail'),
+        meta: { title: '新建表单1', icon: 'test-detail', keepAlive: false, roles: 1 }
+      }
+    ]
   }
   , { path: '*', redirect: '/404', hidden: true }
 ]

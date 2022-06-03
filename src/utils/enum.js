@@ -81,6 +81,33 @@ export const IsOrgEnum = (function(Enum){
    return Enum;
   })(EnumType())
 
+  export const TemplateGradeEnum = (function(Enum){
+    Enum[0] = Enum['General'] = { name: '一般事项', value: 1 };
+    Enum[1] = Enum['Important'] = { name: '重要事项', value: 2 };
+    return Enum;
+  })(EnumType())
+  
+//模板运营状态
+export const TemplateOperationStateEnum = (function (Enum) {
+  Enum[0] = Enum['PreparationPeriod'] = { name: '筹建期', value: 1 };
+  Enum[1] = Enum['OperationPeriod'] = { name: '运营期', value: 2 };
+  return Enum;
+})(EnumType())
+
+//模板生成频次
+export const TemplateFrequencyEnum = (function (Enum) {
+    Enum[0] = Enum['Week'] = { name: '周', value: 1 };
+    Enum[1] = Enum['HalfMonth'] = { name: '半月', value: 2 };
+    Enum[2] = Enum['Month'] = { name: '月', value: 3 };
+    Enum[3] = Enum['DoubleMonth'] = { name: '双月', value: 4 };
+    Enum[4] = Enum['Quarter'] = { name: '季度', value: 5 };
+    Enum[5] = Enum['HalfYear'] = { name: '半年', value: 6 };
+    Enum[6] = Enum['Year'] = { name: '年', value: 7 };
+    Enum[7] = Enum['Special'] = { name: '专项', value: 8 };
+    Enum[8] = Enum['Other'] = { name: '其他', value: 9 };
+    return Enum;
+  })(EnumType())
+
 ///////////////////////////////////////////////////////////////////////////////////////////
 
 

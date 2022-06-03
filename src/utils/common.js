@@ -65,3 +65,30 @@ export function shuffle(array, seed, start, end) {
 export function timestamp(time = new Date()) {
   return parseInt(time.getTime() / 1000)
 }
+
+export function reactive(obj) {
+  return new Proxy(obj, {
+    get(target, key) {
+      track(target, key)
+      return target[key]
+    },
+    set(target, key, value) {
+      trigger(target, key)
+      target[key] = value
+    }
+  })
+}
+
+export function ref(value) {
+  const refObject = {
+    get value() {
+      track(refObject, 'value')
+      return value
+    },
+    set value(newValue) {
+      trigger(refObject, 'value')
+      value = newValue
+    }
+  }
+  return refObject
+}
