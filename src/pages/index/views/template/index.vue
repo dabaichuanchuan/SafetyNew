@@ -125,19 +125,19 @@
           v-loading="listLoading"
           border
         >
-          <el-table-column label="名称" align="center">
+          <el-table-column label="模板名称" align="center">
             <template slot-scope="scope">{{ scope.row.name }}</template>
           </el-table-column>
-          <el-table-column label="类型" align="center">
+          <el-table-column label="模板类型" align="center">
             <template slot-scope="scope">{{
               scope.row.type | formatTemplateTypeEnumName
             }}</template>
           </el-table-column>
           <el-table-column label="分类" align="center">
-            <template slot-scope="scope">{{ scope.row.classId }}</template>
+            <template slot-scope="scope">{{ scope.row.classText }}</template>
           </el-table-column>
           <el-table-column label="业态" align="center">
-            <template slot-scope="scope">{{ scope.row.businessId }}</template>
+            <template slot-scope="scope">{{ scope.row.businessText }}</template>
           </el-table-column>
           <el-table-column label="区域" align="center">
             <template slot-scope="scope">{{

@@ -13,129 +13,87 @@
         :key="order"
       >
         <div>
-          <span>字段名称:</span>
-          <el-input
-            placeholder="请输入内容"
-            v-model="item.label"
-            clearable
-            style="width: 35%"
-          >
-          </el-input>
-          <span>字段类型:</span>
-          <el-select
-            v-model="item.type"
-            placeholder="请选择"
-            style="width: 20%;"
-          >
-            <el-option
-              v-for="types in typeOptions"
-              :key="types.value"
-              :label="types.label"
-              :value="types.value"
-            >
-            </el-option>
-          </el-select>
-          <span>是否必填:</span>
-              <el-switch
-                 v-model="item.label"
-                :active-value="0"
-                :inactive-value="1"
-                active-text="是"
-                inactive-text="否"
-                style="width: 20%"                
-              >
-              </el-switch>
+          <el-form>
+            <el-row type="flex">
+              <el-col>
+                <el-form-item label="字段名称：">
+                  <el-input
+                    placeholder="请输入内容"
+                    v-model="item.label"
+                    clearable
+                    style="width: 80%"
+                  >
+                  </el-input>
+                </el-form-item>
+              </el-col>
+              <el-col>
+                <el-form-item label="字段类型：">
+                  <el-select
+                    v-model="item.type"
+                    placeholder="请选择"
+                    style="width: 60%"
+                  >
+                    <el-option
+                      v-for="types in typeOptions"
+                      :key="types.value"
+                      :label="types.label"
+                      :value="types.value"
+                    >
+                    </el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+            </el-row>
+            <el-row type="flex">
+              <el-col>                
+                <el-form-item label="字段描述：">
+                  <el-input
+                    placeholder="请输入内容"
+                    v-model="item.label"
+                    clearable
+                    type="textarea"
+                    style="width: 80%"
+                  >
+                  </el-input>
+                </el-form-item>
+              </el-col>
+                <el-col>
+                <el-form-item label="是否必填：">
+                  <el-switch
+                    v-model="item.requiredField"
+                    :active-value="0"
+                    :inactive-value="1"
+                    active-text="是"
+                    inactive-text="否"
+                    style="width: 60%"
+                  >
+                  </el-switch>
+                </el-form-item>
+              </el-col>
+            </el-row>
+          </el-form>
         </div>
         <div
           v-show="item.type == 'input'"
           style="color: grey; margin-top: 20px"
         >
-           <el-input
+          <el-input
             v-model="item.label"
             clearable
             style="width: 80%"
-            disabled =flase
-            name=""
+            disabled="flase"
           >
           </el-input>
         </div>
-
-        <div v-show="item.type == 'text'" style="color: grey; margin-top: 20px">
-           <el-input
+        <div v-if="item.type == 'text'" style="color: grey; margin-top: 20px">
+          <el-input
             v-model="item.label"
             clearable
             style="width: 80%"
-            rows="3"
-            disabled =flase
-            value=""
+            type="textarea"
+            disabled="flase"
           >
           </el-input>
-        </div>
-
-        <div
-          class="radio"
-          v-if="item.type == 'radio'"
-          style="color: grey; margin-top: 20px"
-        >
-          <div v-for="(j, index) in item.radioBoxName" :key="index">
-            ○
-            <el-input
-              placeholder="请输入选项名"
-              v-model="j.val"
-              clearable
-              style="width: 80%"
-            >
-            </el-input>
-          </div>
-          <div>
-            <el-button
-              type="text"
-              @click="addradio(item.radioBoxName.length, order)"
-              ><i
-                class="el-icon-circle-plus-outline"
-                style="font-size: 20px; margin-top: 10px"
-              ></i
-            ></el-button>
-            <el-button type="text" @click="deleteradio(order)"
-              ><i
-                class="el-icon-remove-outline"
-                style="font-size: 20px; margin-top: 10px"
-              ></i
-            ></el-button>
-          </div>
-        </div>
-
-        <div
-          class="radio"
-          v-if="item.type == 'checkbox'"
-          style="color: grey; margin-top: 20px"
-        >
-          <div v-for="(j, index) in item.checkBoxName" :key="index">
-            □
-            <el-input
-              placeholder="请输入选项名"
-              v-model="j.val"
-              clearable
-              style="width: 80%"
-            >
-            </el-input>
-          </div>
-          <div>
-            <el-button
-              type="text"
-              @click="addcheckbox(item.checkBoxName.length, order)"
-              ><i
-                class="el-icon-circle-plus-outline"
-                style="font-size: 20px; margin-top: 10px"
-              ></i
-            ></el-button>
-            <el-button type="text" @click="deletecheckbox(order)"
-              ><i
-                class="el-icon-remove-outline"
-                style="font-size: 20px; margin-top: 10px"
-              ></i
-            ></el-button>
-          </div>
         </div>
         <div
           class="radio"
@@ -168,7 +126,6 @@
             ></el-button>
           </div>
         </div>
-
         <div
           class="radio"
           v-if="item.type == 'datePicker'"
@@ -177,30 +134,13 @@
           <div>
             <el-date-picker
               placeholder="日期选择"
-              v-model="item.label"
+              v-model="item.inputValue"
               clearable
               style="width: 80%"
             >
             </el-date-picker>
           </div>
         </div>
-
-        <div
-          class="radio"
-          v-if="item.type == 'timePicker'"
-          style="color: grey; margin-top: 20px"
-        >
-          <div>
-            <el-time-picker
-              placeholder="时间选择"
-              v-model="item.label"
-              clearable
-              style="width: 80%"
-            >
-            </el-time-picker>
-          </div>
-        </div>
-
         <div
           class="radio"
           v-if="item.type == 'upload'"
@@ -217,28 +157,18 @@
             </el-upload>
           </div>
         </div>
-
-
         <div
           v-if="item.type == 'showLable'"
           style="color: grey; margin-top: 20px"
-          >
+        >
           <el-input
             placeholder="请输入说明内容"
-            v-model="item.label"
+            v-model="item.inputValue"
             :rows="3"
-             type="textarea"
+            type="textarea"
             clearable
           >
           </el-input>
-        </div>
-
-        <div
-          class="radio"
-          v-if="item.type == 'rate'"
-          style="color: grey; margin-top: 20px"
-        >
-          <el-rate v-model="item.val"></el-rate>
         </div>
       </el-card>
       <div
@@ -291,18 +221,15 @@
 
 <script>
 import formCreate from "@form-create/element-ui";
-import { DatePicker } from "@form-create/element-ui";
-
 
 const templateClassform = {
   id: "",
   title: "",
   propertyType: 0,
-  requiredField: 0,  
+  requiredField: 0,
   frequency: "",
   flag: 0,
 };
-
 
 export default {
   name: "NewForm",
@@ -315,39 +242,8 @@ export default {
           label: "请输入内容",
           type: "input",
           inputValue: "输入内容",
+          requiredField: 0,
           rateValue: "",
-          radioBoxName: [
-            {
-              key: 0,
-              val: "单选项1",
-            },
-            {
-              key: 1,
-              val: "单选项2",
-            },
-            {
-              key: 2,
-              val: "单选项3",
-            },
-          ],
-          checkBoxName: [
-            {
-              key: 0,
-              val: "多选项1",
-            },
-            {
-              key: 1,
-              val: "多选项2",
-            },
-            {
-              key: 2,
-              val: "多选项3",
-            },
-            {
-              key: 3,
-              val: "多选项4",
-            },
-          ],
           selectBoxName: [
             {
               key: 0,
@@ -375,14 +271,6 @@ export default {
           label: "文本域",
         },
         {
-          value: "radio",
-          label: "单选按钮",
-        },
-        // {
-        //   value: "checkbox",
-        //   label: "多选按钮",
-        // },
-        {
           value: "select",
           label: "下拉选择",
         },
@@ -390,10 +278,6 @@ export default {
           value: "datePicker",
           label: "日期选择",
         },
-        // {
-        //   value: "timePicker",
-        //   label: "时间选择",
-        // },
         {
           value: "upload",
           label: "附件",
@@ -414,10 +298,6 @@ export default {
           value: "cCPerson",
           label: "抄送人",
         },
-        // {
-        //   value: "rate",
-        //   label: "评分",
-        // },
       ],
       value: [],
       // 生成的表单规则
@@ -440,40 +320,9 @@ export default {
       this.formData.push({
         label: "请输入内容",
         type: "input",
+        requiredField: 0,
         inputValue: "输入内容",
         rateValue: "",
-        radioBoxName: [
-          {
-            key: 0,
-            val: "单选项1",
-          },
-          {
-            key: 1,
-            val: "单选项2",
-          },
-          {
-            key: 2,
-            val: "单选项3",
-          },
-        ],
-        checkBoxName: [
-          {
-            key: 0,
-            val: "多选项1",
-          },
-          {
-            key: 1,
-            val: "多选项2",
-          },
-          {
-            key: 2,
-            val: "多选项3",
-          },
-          {
-            key: 3,
-            val: "多选项4",
-          },
-        ],
         selectBoxName: [
           {
             key: 0,
@@ -488,7 +337,6 @@ export default {
             val: "选项3",
           },
         ],
-        DatePicker: "请选择时间",
       });
     },
     // 删除组件
@@ -531,37 +379,7 @@ export default {
       this.formrule = [];
       for (let i = 0; i < this.formData.length; i++) {
         const item = this.formData[i];
-        if (item.type === "radio") {
-          let h = item.radioBoxName.length;
-          let options = [];
-          for (let j = 0; j < h; j++) {
-            options.push({
-              value: item.radioBoxName[j].key,
-              label: item.radioBoxName[j].val,
-            });
-          }
-          this.formrule.push({
-            type: item.type,
-            field: item.label,
-            title: item.label,
-            options: options,
-          });
-        } else if (item.type === "checkbox") {
-          let h = item.checkBoxName.length;
-          let options = [];
-          for (let j = 0; j < h; j++) {
-            options.push({
-              value: item.checkBoxName[j].key,
-              label: item.checkBoxName[j].val,
-            });
-          }
-          this.formrule.push({
-            type: item.type,
-            field: item.label,
-            title: item.label,
-            options: options,
-          });
-        } else if (item.type === "select") {
+        if (item.type === "select") {
           let h = item.selectBoxName.length;
           let options = [];
           for (let j = 0; j < h; j++) {
@@ -571,34 +389,39 @@ export default {
             });
           }
           this.formrule.push({
-            type: item.type,
             field: item.label,
             title: item.label,
+            type: item.type,
+            requiredField: item.requiredField,
             options: options,
           });
-        } else if (item.type === "rate") {
+        } else if (item.type === "text") {
           this.formrule.push({
-            type: item.type,
-            field: item.rateValue,
+            field: item.label,
             title: item.label,
+            type: "input",
+            requiredField: item.requiredField,
           });
-        } else if (item.type === "Text") {
+        } else if (item.type === "datePicker") {
           this.formrule.push({
-            type: item.type,
-            field: item.rateValue,
+            field: item.label,
             title: item.label,
+            type: item.type,
+            requiredField: item.requiredField,
           });
         } else {
           this.formrule.push({
-            type: item.type,
             field: item.label,
             title: item.label,
+            type: item.type,
+            requiredField: item.requiredField,
           });
           console.log(this.formrule);
         }
       }
       this.dialogTableVisible = true;
       console.log(this.formrule);
+      alert(JSON.stringify(this.formrule));
     },
     onSubmit(formData) {
       alert(JSON.stringify(formData));

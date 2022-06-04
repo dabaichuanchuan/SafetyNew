@@ -113,8 +113,8 @@
                 >
                 </el-option>
               </el-select>
-            </el-form-item>            
-             <el-form-item label=" 生成频次：" prop="frequency">
+            </el-form-item>
+            <el-form-item label=" 生成频次：" prop="frequency">
               <el-select
                 v-model="templateformData.model.frequency"
                 clearable
@@ -133,7 +133,7 @@
         </el-row>
         <el-row type="flex">
           <el-col>
-             <el-form-item label="填报岗位：" prop="fillPositionId">
+            <el-form-item label="填报岗位：" prop="fillPositionId">
               <el-select
                 v-model="templateformData.model.fillPositionId"
                 clearable
@@ -144,6 +144,21 @@
                   :key="item.id"
                   :label="item.name"
                   :value="item.id"
+                >
+                </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="模板类型：" prop="type">
+              <el-select
+                v-model="templateformData.model.type"
+                clearable
+                placeholder="全部"
+              >
+                <el-option
+                  v-for="item in templateTypeOptions"
+                  :key="item.value"
+                  :label="item.name"
+                  :value="item.value"
                 >
                 </el-option>
               </el-select>
@@ -168,7 +183,11 @@
                 style="width: 205px"
               />
             </el-form-item>
-           <el-form-item label="节 点 分 值：">
+          </el-col>
+        </el-row>
+        <el-row type="flex">
+          <el-col>
+            <el-form-item label="节 点 分 值：">
               <el-input
                 v-model="templateformData.model.score"
                 class="input-width"
@@ -177,10 +196,6 @@
               >
               </el-input>
             </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row type="flex">
-          <el-col>           
             <el-form-item label="是 否 启 用：" prop="flag">
               <el-switch
                 v-model="templateformData.model.flag"
@@ -232,6 +247,7 @@ import {
   TemplateOperationStateEnum,
   OrgTypeEnum,
   TemplateFrequencyEnum,
+  TemplateTypeEnum,
 } from "@/utils/enum";
 import {
   getTemplateClassList,
@@ -247,7 +263,7 @@ const defaultListQuery = {
   keyWord: "",
   grade: "",
   business: "",
-  tenantId: '',
+  tenantId: "",
   flag: "",
   pageNum: 1,
   pageSize: 100,
@@ -256,10 +272,10 @@ const defaultListQuery = {
 const templateform = {
   id: "",
   name: "",
-  type: 0,
+  type: "",
   classId: "",
   businessId: "",
-  orderNo: 0 ,
+  orderNo: 0,
   beginDate: "",
   endDate: "",
   fillPositionId: "",
@@ -281,6 +297,7 @@ export default {
       templateOperationStateOptions: TemplateOperationStateEnum.items(),
       templateFrequencyOptions: TemplateFrequencyEnum.items(),
       OrgTypeOptions: OrgTypeEnum.items(),
+      templateTypeOptions: TemplateTypeEnum.items(),
       businessList: [],
       enterpriseOptions: [],
       templateClassList: [],
@@ -299,6 +316,7 @@ export default {
           tenantId: [{ required: true, message: "请选择所属企业" }],
           orgType: [{ required: true, message: "请选择区域类型" }],
           frequency: [{ required: true, message: "请选择生成频次" }],
+          type: [{ required: true, message: "请选择模板类型次" }],
         },
       },
     };
@@ -346,8 +364,7 @@ export default {
               this.$message.success("保存成功");
             })
             .catch(() => {})
-            .then(() => {
-            });
+            .then(() => {});
         } else {
           this.$message.error("保存失败");
         }
