@@ -142,13 +142,19 @@ export const asyncRouterMap = [
         path: 'index',
         name: 'index',
         component: () => import('../views/template/index'),
-        meta: { title: '新建表单', icon: 'test-paper', roles: 3 }
+        meta: { title: '表单查询', icon: 'test-paper', roles: 3 }
       },
       {
         path: 'detail',
         name: 'detail',
         component: () => import('../views/template/detail'),
-        meta: { title: '新建表单1', icon: 'test-detail', keepAlive: false, roles: 1 }
+        meta: { title: '新建主表单', icon: 'test-detail', keepAlive: false, roles: 1 }
+      },
+      {
+        path: 'index1',
+        name: 'index1',
+        component: () => import('../views/template/index1'),
+        meta: { title: '新建子表单', icon: 'test-detail', keepAlive: false, roles: 1 }
       }
     ]
   }

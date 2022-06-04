@@ -94,6 +94,12 @@ export const TemplateOperationStateEnum = (function (Enum) {
   return Enum;
 })(EnumType())
 
+//模板类型
+export const TemplateTypeEnum = (function (Enum) {
+  Enum[0] = Enum['NPNODE'] = { name: '安全计划', value: 1 };
+  Enum[1] = Enum['KCNODE'] = { name: '厨房计划', value: 2 };
+  return Enum;
+})(EnumType())
 //模板生成频次
 export const TemplateFrequencyEnum = (function (Enum) {
     Enum[0] = Enum['Week'] = { name: '周', value: 1 };
@@ -105,6 +111,21 @@ export const TemplateFrequencyEnum = (function (Enum) {
     Enum[6] = Enum['Year'] = { name: '年', value: 7 };
     Enum[7] = Enum['Special'] = { name: '专项', value: 8 };
     Enum[8] = Enum['Other'] = { name: '其他', value: 9 };
+    return Enum;
+  })(EnumType())
+
+//模板字段类型
+export const TemplateClassTypeEnum = (function (Enum) {
+    Enum[0] = Enum['input'] = { name: '文本框', value: 1 };
+    Enum[1] = Enum['text'] = { name: '文本域', value: 2 };
+    Enum[2] = Enum['radio'] = { name: '单选按钮', value: 3 };
+    Enum[3] = Enum['select'] = { name: '下拉选择', value: 4 };
+    Enum[4] = Enum['datePicker'] = { name: '日期选择', value: 5 };
+    Enum[5] = Enum['upload'] = { name: '附件', value: 6 };
+    Enum[6] = Enum['showLable'] = { name: '说明类型', value: 7 };
+    Enum[7] = Enum['approvalCommon'] = { name: '同时审批人', value: 8 };
+    Enum[8] = Enum['approvalOrder'] = { name: '顺序审批人', value: 9 };
+    Enum[9] = Enum['cCPerson'] = { name: '抄送人', value: 10 };
     return Enum;
   })(EnumType())
 
