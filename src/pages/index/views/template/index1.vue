@@ -16,60 +16,57 @@
           <span>字段名称:</span>
           <el-input
             placeholder="请输入内容"
-            v-model="item.model.title"
+            v-model="item.label"
             clearable
             style="width: 35%"
           >
           </el-input>
           <span>字段类型:</span>
           <el-select
-            v-model="item.model.propertyType"
+            v-model="item.type"
             placeholder="请选择"
-            style="width: 20%"
+            style="width: 20%;"
           >
             <el-option
               v-for="types in typeOptions"
               :key="types.value"
-              :label="types.name"
+              :label="types.label"
               :value="types.value"
             >
             </el-option>
           </el-select>
           <span>是否必填:</span>
-          <el-switch
-            v-model="item.model.flag"
-            :active-value="0"
-            :inactive-value="1"
-            active-text="是"
-            inactive-text="否"
-            style="width: 20%"
-          >
-          </el-switch>
+              <el-switch
+                 v-model="item.label"
+                :active-value="0"
+                :inactive-value="1"
+                active-text="是"
+                inactive-text="否"
+                style="width: 20%"                
+              >
+              </el-switch>
         </div>
         <div
-          v-show="item.model.propertyType == '1'"
+          v-show="item.type == 'input'"
           style="color: grey; margin-top: 20px"
         >
-          <el-input
+           <el-input
             v-model="item.label"
             clearable
             style="width: 80%"
-            disabled="flase"
+            disabled =flase
             name=""
           >
           </el-input>
         </div>
 
-        <div
-          v-if="item.model.propertyType == '2'"
-          style="color: grey; margin-top: 20px"
-        >
-          <el-input
+        <div v-show="item.type == 'text'" style="color: grey; margin-top: 20px">
+           <el-input
             v-model="item.label"
             clearable
             style="width: 80%"
             rows="3"
-            disabled="flase"
+            disabled =flase
             value=""
           >
           </el-input>
@@ -77,7 +74,7 @@
 
         <div
           class="radio"
-          v-if="item.model.propertyType == '3'"
+          v-if="item.type == 'radio'"
           style="color: grey; margin-top: 20px"
         >
           <div v-for="(j, index) in item.radioBoxName" :key="index">
@@ -107,9 +104,42 @@
             ></el-button>
           </div>
         </div>
+
         <div
           class="radio"
-          v-if="item.model.propertyType == '4'"
+          v-if="item.type == 'checkbox'"
+          style="color: grey; margin-top: 20px"
+        >
+          <div v-for="(j, index) in item.checkBoxName" :key="index">
+            □
+            <el-input
+              placeholder="请输入选项名"
+              v-model="j.val"
+              clearable
+              style="width: 80%"
+            >
+            </el-input>
+          </div>
+          <div>
+            <el-button
+              type="text"
+              @click="addcheckbox(item.checkBoxName.length, order)"
+              ><i
+                class="el-icon-circle-plus-outline"
+                style="font-size: 20px; margin-top: 10px"
+              ></i
+            ></el-button>
+            <el-button type="text" @click="deletecheckbox(order)"
+              ><i
+                class="el-icon-remove-outline"
+                style="font-size: 20px; margin-top: 10px"
+              ></i
+            ></el-button>
+          </div>
+        </div>
+        <div
+          class="radio"
+          v-if="item.type == 'select'"
           style="color: grey; margin-top: 20px"
         >
           <div v-for="(j, index) in item.selectBoxName" :key="index">
@@ -141,7 +171,7 @@
 
         <div
           class="radio"
-          v-if="item.model.propertyType == '5'"
+          v-if="item.type == 'datePicker'"
           style="color: grey; margin-top: 20px"
         >
           <div>
@@ -154,9 +184,26 @@
             </el-date-picker>
           </div>
         </div>
+
         <div
           class="radio"
-          v-if="item.model.propertyType == '6'"
+          v-if="item.type == 'timePicker'"
+          style="color: grey; margin-top: 20px"
+        >
+          <div>
+            <el-time-picker
+              placeholder="时间选择"
+              v-model="item.label"
+              clearable
+              style="width: 80%"
+            >
+            </el-time-picker>
+          </div>
+        </div>
+
+        <div
+          class="radio"
+          v-if="item.type == 'upload'"
           style="color: grey; margin-top: 20px"
         >
           <div>
@@ -170,18 +217,28 @@
             </el-upload>
           </div>
         </div>
+
+
         <div
-          v-if="item.model.propertyType == '7'"
+          v-if="item.type == 'showLable'"
           style="color: grey; margin-top: 20px"
-        >
+          >
           <el-input
             placeholder="请输入说明内容"
             v-model="item.label"
             :rows="3"
-            type="textarea"
+             type="textarea"
             clearable
           >
           </el-input>
+        </div>
+
+        <div
+          class="radio"
+          v-if="item.type == 'rate'"
+          style="color: grey; margin-top: 20px"
+        >
+          <el-rate v-model="item.val"></el-rate>
         </div>
       </el-card>
       <div
@@ -233,29 +290,28 @@
 </template>
 
 <script>
-import { TemplateClassTypeEnum } from "@/utils/enum";
 import formCreate from "@form-create/element-ui";
 import { DatePicker } from "@form-create/element-ui";
+
 
 const templateClassform = {
   id: "",
   title: "",
   propertyType: 0,
-  requiredField: 0,
+  requiredField: 0,  
   frequency: "",
   flag: 0,
 };
+
 
 export default {
   name: "NewForm",
   data() {
     return {
       dialogTableVisible: false,
-      typeOptions: TemplateClassTypeEnum.items(),
       // 模板
       formData: [
         {
-          model: Object.assign({}, templateClassform),
           label: "请输入内容",
           type: "input",
           inputValue: "输入内容",
@@ -308,6 +364,61 @@ export default {
           ],
         },
       ],
+      // 下拉选择框
+      typeOptions: [
+        {
+          value: "input",
+          label: "文本框",
+        },
+        {
+          value: "text",
+          label: "文本域",
+        },
+        {
+          value: "radio",
+          label: "单选按钮",
+        },
+        // {
+        //   value: "checkbox",
+        //   label: "多选按钮",
+        // },
+        {
+          value: "select",
+          label: "下拉选择",
+        },
+        {
+          value: "datePicker",
+          label: "日期选择",
+        },
+        // {
+        //   value: "timePicker",
+        //   label: "时间选择",
+        // },
+        {
+          value: "upload",
+          label: "附件",
+        },
+        {
+          value: "showLable",
+          label: "说明类型",
+        },
+        {
+          value: "approvalCommon",
+          label: "同时审批人",
+        },
+        {
+          value: "approvalOrder",
+          label: "序审批人",
+        },
+        {
+          value: "cCPerson",
+          label: "抄送人",
+        },
+        // {
+        //   value: "rate",
+        //   label: "评分",
+        // },
+      ],
       value: [],
       // 生成的表单规则
       formrule: [],
@@ -323,7 +434,6 @@ export default {
   components: {
     formCreate: formCreate.$form(),
   },
-  created() {},
   methods: {
     // 增加组件
     adddiv() {
@@ -378,6 +488,7 @@ export default {
             val: "选项3",
           },
         ],
+        DatePicker: "请选择时间",
       });
     },
     // 删除组件
@@ -418,10 +529,9 @@ export default {
     },
     tijiao() {
       this.formrule = [];
-      debugger;
       for (let i = 0; i < this.formData.length; i++) {
         const item = this.formData[i];
-        if (item.model.propertyType === 3) {
+        if (item.type === "radio") {
           let h = item.radioBoxName.length;
           let options = [];
           for (let j = 0; j < h; j++) {
@@ -431,27 +541,27 @@ export default {
             });
           }
           this.formrule.push({
-            type: "radio",
-            field: item.model.title,
-            title: item.model.title,
+            type: item.type,
+            field: item.label,
+            title: item.label,
             options: options,
           });
-        // } else if (item.type === "checkbox") {
-        //   let h = item.checkBoxName.length;
-        //   let options = [];
-        //   for (let j = 0; j < h; j++) {
-        //     options.push({
-        //       value: item.checkBoxName[j].key,
-        //       label: item.checkBoxName[j].val,
-        //     });
-        //   }
-        //   this.formrule.push({
-        //     type: item.type,
-        //     field: item.label,
-        //     title: item.label,
-        //     options: options,
-        //   });
-        } else if (item.model.propertyType === 4) {
+        } else if (item.type === "checkbox") {
+          let h = item.checkBoxName.length;
+          let options = [];
+          for (let j = 0; j < h; j++) {
+            options.push({
+              value: item.checkBoxName[j].key,
+              label: item.checkBoxName[j].val,
+            });
+          }
+          this.formrule.push({
+            type: item.type,
+            field: item.label,
+            title: item.label,
+            options: options,
+          });
+        } else if (item.type === "select") {
           let h = item.selectBoxName.length;
           let options = [];
           for (let j = 0; j < h; j++) {
@@ -461,52 +571,28 @@ export default {
             });
           }
           this.formrule.push({
-            type: "select",
+            type: item.type,
             field: item.label,
             title: item.label,
             options: options,
           });
-        // } else if (item.type === "rate") {
-        //   this.formrule.push({
-        //     type: item.type,
-        //     field: item.rateValue,
-        //     title: item.label,
-        //   });
-        } else if (item.model.propertyType === 2) {
+        } else if (item.type === "rate") {
           this.formrule.push({
-            type: "text",
+            type: item.type,
             field: item.rateValue,
             title: item.label,
           });
-        } else if (item.model.propertyType === 1) {
+        } else if (item.type === "Text") {
           this.formrule.push({
-            type: "input",
-            field: item.rateValue,
-            title: item.label,
-          });
-        } else if (item.model.propertyType === 5) {
-          this.formrule.push({
-            type: "datePicker",
-            field: item.rateValue,
-            title: item.label,
-          });
-        } else if (item.model.propertyType === 6) {
-          this.formrule.push({
-            type: "upload",
-            field: item.rateValue,
-            title: item.label,
-          });
-        } else if (item.model.propertyType === 7) {
-          this.formrule.push({
-            type: "showLable",
+            type: item.type,
             field: item.rateValue,
             title: item.label,
           });
         } else {
           this.formrule.push({
-            type: item.model.propertyType,
-            field: item.model.title,
-            title: item.model.title,
+            type: item.type,
+            field: item.label,
+            title: item.label,
           });
           console.log(this.formrule);
         }
