@@ -21,7 +21,7 @@
                     placeholder="请输入内容"
                     v-model="item.label"
                     clearable
-                    style="width: 80%"
+                    style="width: 350px;"
                   >
                   </el-input>
                 </el-form-item>
@@ -31,7 +31,7 @@
                   <el-select
                     v-model="item.type"
                     placeholder="请选择"
-                    style="width: 60%"
+                    style="width: 300px;"
                   >
                     <el-option
                       v-for="types in typeOptions"
@@ -52,7 +52,7 @@
                     v-model="item.label"
                     clearable
                     type="textarea"
-                    style="width: 80%"
+                    style="width: 350px;"
                   >
                   </el-input>
                 </el-form-item>
@@ -65,7 +65,7 @@
                     :inactive-value="1"
                     active-text="是"
                     inactive-text="否"
-                    style="width: 60%"
+                    style="width: 300px;"
                   >
                   </el-switch>
                 </el-form-item>

@@ -114,7 +114,7 @@
                 </el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label=" 生成频次：" prop="frequency">
+            <el-form-item label="生成频次：" prop="frequency">
               <el-select
                 v-model="templateformData.model.frequency"
                 clearable
@@ -173,7 +173,7 @@
                 style="width: 205px"
               />
             </el-form-item>
-            <el-form-item label="结 束 时 间：" prop="endDate">
+            <el-form-item label="结 束 时间：" prop="endDate">
               <el-date-picker
                 v-model="templateformData.model.endDate"
                 :editable="false"
@@ -225,6 +225,7 @@
           </el-upload>
         </el-row>
         <el-divider class="line">表单属性设置</el-divider>
+        <TemplateProperty v-if="!tao"></TemplateProperty>        
       </el-form>
       <span style="text-align: center; display: block">
         <el-button size="small">取 消</el-button>
@@ -257,6 +258,7 @@ import { getBusinessList } from "../../api/manager/business";
 import { getEnterpriseList } from "../../api/manager/enterprise";
 import { getPositionPage } from "../../api/manager/position";
 import { formatDateTime } from "@/utils/common";
+import TemplateProperty from '@/pages/index/views/template/index1';
 
 const defaultListQuery = {
   id: "",
@@ -320,6 +322,9 @@ export default {
         },
       },
     };
+  },
+  components: {
+    TemplateProperty
   },
   computed: {},
   created() {
