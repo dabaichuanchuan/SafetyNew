@@ -6,7 +6,7 @@
         style="
           width: 80%;
           margin-left: 10%;
-          min-height: 150px;
+          min-height: 80px;
           margin-top: 10px;
         "
         v-for="(item, order) in formData"
@@ -15,37 +15,50 @@
         <div>
           <el-form>
             <el-row type="flex">
-              <el-col>
+              <el-col style="width: 50%">
                 <el-form-item label="字段名称：">
                   <el-input
                     placeholder="请输入内容"
-                    v-model="item.label"
+                    v-model="item.title"
                     clearable
                     style="width: 350px;"
                   >
                   </el-input>
                 </el-form-item>
               </el-col>
-              <el-col>
+              <el-col style="width: 30%">
                 <el-form-item label="字段类型：">
                   <el-select
-                    v-model="item.type"
+                    v-model="item.propertyType"
                     placeholder="请选择"
-                    style="width: 300px;"
+                    style="width: 150px;"
                   >
                     <el-option
                       v-for="types in typeOptions"
                       :key="types.value"
-                      :label="types.label"
+                      :label="types.name"
                       :value="types.value"
                     >
                     </el-option>
                   </el-select>
                 </el-form-item>
               </el-col>
+               <el-col style="width: 20%">
+                <el-form-item label="是否必填：">
+                  <el-switch
+                    v-model="item.requiredField"
+                    :active-value="0"
+                    :inactive-value="1"
+                    active-text="是"
+                    inactive-text="否"
+                    style="width: 80px;"
+                  >
+                  </el-switch>
+                </el-form-item>
+              </el-col>
             </el-row>
-            <el-row type="flex">
-              <el-col>                
+           <!-- <el-row type="flex">
+               <el-col>                
                 <el-form-item label="字段描述：">
                   <el-input
                     placeholder="请输入内容"
@@ -56,24 +69,11 @@
                   >
                   </el-input>
                 </el-form-item>
-              </el-col>
-                <el-col>
-                <el-form-item label="是否必填：">
-                  <el-switch
-                    v-model="item.requiredField"
-                    :active-value="0"
-                    :inactive-value="1"
-                    active-text="是"
-                    inactive-text="否"
-                    style="width: 300px;"
-                  >
-                  </el-switch>
-                </el-form-item>
-              </el-col>
-            </el-row>
+              </el-col>               
+            </el-row>--> 
           </el-form>
         </div>
-        <div
+        <!-- <div
           v-show="item.type == 'input'"
           style="color: grey; margin-top: 20px"
         >
@@ -84,7 +84,7 @@
             disabled="flase"
           >
           </el-input>
-        </div>
+        </div> 
         <div v-if="item.type == 'text'" style="color: grey; margin-top: 20px">
           <el-input
             v-model="item.label"
@@ -94,10 +94,10 @@
             disabled="flase"
           >
           </el-input>
-        </div>
+        </div>-->
         <div
           class="radio"
-          v-if="item.type == 'select'"
+          v-if="item.propertyType == '3'"
           style="color: grey; margin-top: 20px"
         >
           <div v-for="(j, index) in item.selectBoxName" :key="index">
@@ -126,7 +126,7 @@
             ></el-button>
           </div>
         </div>
-        <div
+        <!-- <div
           class="radio"
           v-if="item.type == 'datePicker'"
           style="color: grey; margin-top: 20px"
@@ -156,15 +156,15 @@
             >
             </el-upload>
           </div>
-        </div>
+        </div> -->
         <div
-          v-if="item.type == 'showLable'"
+          v-if="item.propertyType == '6'"
           style="color: grey; margin-top: 20px"
         >
           <el-input
             placeholder="请输入说明内容"
             v-model="item.inputValue"
-            :rows="3"
+            :rows="2"
             type="textarea"
             clearable
           >
@@ -221,29 +221,34 @@
 
 <script>
 import formCreate from "@form-create/element-ui";
+import {
+  TemplateClassTypeEnum,
+} from "@/utils/enum";
 
-const templateClassform = {
+const templatePropertyEntity = {
   id: "",
+  templateId: "",
   title: "",
-  propertyType: 0,
+  propertyType: 0,  
+  optionValue: "",
+  defaultValue: "",
+  orderNo: 0,
   requiredField: 0,
-  frequency: "",
-  flag: 0,
 };
 
 export default {
   name: "NewForm",
   data() {
     return {
+      tPropertymodel: Object.assign({}, templatePropertyEntity),
       dialogTableVisible: false,
       // 模板
       formData: [
         {
-          label: "请输入内容",
-          type: "input",
-          inputValue: "输入内容",
+          title: "",
+          propertyType: "",
+          inputValue: "",
           requiredField: 0,
-          rateValue: "",
           selectBoxName: [
             {
               key: 0,
@@ -261,44 +266,7 @@ export default {
         },
       ],
       // 下拉选择框
-      typeOptions: [
-        {
-          value: "input",
-          label: "文本框",
-        },
-        {
-          value: "text",
-          label: "文本域",
-        },
-        {
-          value: "select",
-          label: "下拉选择",
-        },
-        {
-          value: "datePicker",
-          label: "日期选择",
-        },
-        {
-          value: "upload",
-          label: "附件",
-        },
-        {
-          value: "showLable",
-          label: "说明类型",
-        },
-        {
-          value: "approvalCommon",
-          label: "同时审批人",
-        },
-        {
-          value: "approvalOrder",
-          label: "序审批人",
-        },
-        {
-          value: "cCPerson",
-          label: "抄送人",
-        },
-      ],
+      typeOptions: TemplateClassTypeEnum.items(),
       value: [],
       // 生成的表单规则
       formrule: [],
@@ -318,11 +286,10 @@ export default {
     // 增加组件
     adddiv() {
       this.formData.push({
-        label: "请输入内容",
-        type: "input",
+        title: "",
+        propertyType: "",
         requiredField: 0,
-        inputValue: "输入内容",
-        rateValue: "",
+        inputValue: "",
         selectBoxName: [
           {
             key: 0,
@@ -378,8 +345,8 @@ export default {
     tijiao() {
       this.formrule = [];
       for (let i = 0; i < this.formData.length; i++) {
-        const item = this.formData[i];
-        if (item.type === "select") {
+        const item = this.formData[i];      
+        if (item.propertyType == "3") {
           let h = item.selectBoxName.length;
           let options = [];
           for (let j = 0; j < h; j++) {
@@ -389,37 +356,37 @@ export default {
             });
           }
           this.formrule.push({
-            field: item.label,
-            title: item.label,
-            type: item.type,
+            orderNo : i,
+            field: item.title,
+            title: item.title,
+            type: item.propertyType,
             requiredField: item.requiredField,
+            defaultValue: "",
             options: options,
-          });
-        } else if (item.type === "text") {
+          }); 
+        } else if (item.propertyType == "6") {
           this.formrule.push({
-            field: item.label,
-            title: item.label,
-            type: "input",
+            orderNo : i,
+            field: item.title,
+            title: item.title,
+            type: item.propertyType,
             requiredField: item.requiredField,
-          });
-        } else if (item.type === "datePicker") {
-          this.formrule.push({
-            field: item.label,
-            title: item.label,
-            type: item.type,
-            requiredField: item.requiredField,
+            defaultValue: item.inputValue,
+            options: "",
           });
         } else {
           this.formrule.push({
-            field: item.label,
-            title: item.label,
-            type: item.type,
+            orderNo : i,
+            field: item.title,
+            title: item.title,
+            type: item.propertyType,
             requiredField: item.requiredField,
+            defaultValue: "",
+            options: "",
           });
-          console.log(this.formrule);
         }
       }
-      this.dialogTableVisible = true;
+      //this.dialogTableVisible = true;
       console.log(this.formrule);
       alert(JSON.stringify(this.formrule));
     },
